@@ -1,4 +1,4 @@
-# Nomes: Nicolas Enzo Yassuda, Kevin Nagayuki Shinohara
+# Nome: Nicolas Enzo Yassuda
 # Linguagem de Programação para Controle de Robô de Limpeza
 ## Video: https://youtu.be/8ZaqlDwzlu0
 Este documento descreve a especificação de uma linguagem de programação própria, projetada para controlar um robô de limpeza. A linguagem inclui comandos específicos para movimentação, controle, limpeza e leitura de sensores, além de suporte para operações matemáticas, lógicas e comparações.
