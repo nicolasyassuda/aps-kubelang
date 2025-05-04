@@ -1,0 +1,13 @@
+{
+    POD pod1;
+
+    pod1.name = "nome_do_pod";
+    pod1.image = "postgres:17";
+    pod1.ports = {
+        containerPort = 5432,3306
+    }
+    pod1.env = {
+        "ENV1" = "valor1",
+        "ENV2" = "valor2"
+    }
+}
