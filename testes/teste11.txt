@@ -1,0 +1,6 @@
+int contador
+contador = 5
+contador++
+contador--
+contador--
+_readSensor contador

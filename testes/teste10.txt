@@ -1,0 +1,5 @@
+int resultado
+resultado = 2 + 3 * 4
+_readSensor resultado
+resultado = (2 + 3) * 4
+_readSensor resultado

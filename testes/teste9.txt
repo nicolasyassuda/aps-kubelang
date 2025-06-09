@@ -1,0 +1,14 @@
+bool a
+bool b
+bool c
+
+a = true
+b = false
+c = a and b
+_readSensor c
+c = a or b
+_readSensor c
+c = !a
+_readSensor c
+c = true and a
+_readSensor c

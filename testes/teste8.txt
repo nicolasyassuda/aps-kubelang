@@ -1,0 +1,3 @@
+int resultado
+resultado = (2 + 3) * 4 - 5 / 5
+_readSensor resultado

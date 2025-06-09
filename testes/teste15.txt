@@ -1,0 +1,18 @@
+int i
+int j
+bool continuar
+
+i = 0
+j = 0
+continuar = true
+
+_while (i < 2) {
+    _repeat 2 {
+        _move frente 1
+        j = j + 1
+    }
+    i = i + 1
+    _if j == 4 {
+        continuar = false
+    }
+}

@@ -1,0 +1,10 @@
+int contador
+bool ativo
+
+contador = 10
+ativo = true
+
+contador++
+contador--
+_readSensor contador
+ativo = false

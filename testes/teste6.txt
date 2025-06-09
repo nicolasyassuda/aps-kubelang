@@ -1,0 +1,6 @@
+int status
+status = 1
+
+_if status == 1 {
+    _returndock
+}

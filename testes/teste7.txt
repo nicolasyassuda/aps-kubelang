@@ -1,0 +1,7 @@
+int contador
+contador = 0
+
+_while (contador < 3) {
+    _move frente 1
+    contador = contador + 1
+}

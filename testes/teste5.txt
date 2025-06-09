@@ -1,0 +1,4 @@
+_repeat 3 {
+    _move frente 2
+    _rotate direita 90
+}

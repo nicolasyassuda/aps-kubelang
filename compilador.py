@@ -1,3 +1,4 @@
+import sys
 '''
 Este codigo é destinado a um compilador de uma liguagem de programação propria para controle de um robô de limpeza.
 
@@ -383,18 +384,19 @@ class ReadingNode(Node):
 
     def evaluate(self, symbol_table,stack_of_commands):
         # Implementar a lógica de leitura do sensor
-        print(f"Lendo o sensor {self.sensor.evaluate(symbol_table,stack_of_commands)}")
+        valor = self.sensor.evaluate(symbol_table,stack_of_commands)
+        print(f"Lendo o sensor {valor}")
         
-        # Não pensei em qual e como seria a leitura do sensor, então fiz um exemplo de como seria a leitura de varios sensores via id;
         exemploSensor = {
             0: 0,
             1: 10,
             2: 20,
-            3: 30
+            3: 30,
+            4: 40
         }
         
-        return exemploSensor[self.sensor.evaluate(symbol_table,stack_of_commands)]
-
+        return exemploSensor.get(valor, -1)
+    
 class ExpressionNode(Node):
     def __init__(self, value):
         self.value = value
@@ -408,6 +410,7 @@ class ExpressionNode(Node):
 class IdentifierNode(Node):
     def __init__(self, name):
         self.name = name
+        self.value = None
 
     def evaluate(self, symbol_table, stack_of_commands):
         value, var_type = symbol_table.getter(self.name)
@@ -686,10 +689,25 @@ _repeat 3 {
 }
 """
 
+if len(sys.argv) != 2:
+    print("Uso: python main.py <caminho_do_arquivo.txt>")
+    sys.exit(1)
+
+try:
+    with open(sys.argv[1], "r", encoding="utf-8") as file:
+        source_code = file.read()
+except FileNotFoundError:
+    print(f"Erro: O arquivo '{sys.argv[1]}' não foi encontrado.")
+    sys.exit(1)
+except Exception as e:
+    print(f"Erro ao ler o arquivo: {e}")
+    sys.exit(1)
+
 tokenizer = Tokenizer(source_code)
 parser = Parser(tokenizer)
 ast = parser.parse()
 symbol_table = SymbolTable()
 stack_of_commands = StackOfCommands()
+
 for command in ast:
-    command.evaluate(symbol_table,stack_of_commands)
+    command.evaluate(symbol_table, stack_of_commands)

@@ -1,0 +1,4 @@
+_move frente 5
+_rotate esquerda 90
+_move tras 3
+_rotate direita 45

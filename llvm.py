@@ -2,6 +2,7 @@ from compilador import AssignmentNode, BinOpNode, CleanTrashNode, DeclarationNod
 import llvmlite.binding as llvm
 import llvmlite.ir as ir
 from typing import Dict, List, Any
+import sys
 
 class LLVMCodeGenerator:
     def __init__(self):
@@ -258,16 +259,18 @@ class LLVMCodeGenerator:
             self._generate_clean_trash()
         elif isinstance(node, ReturnDockNode):
             self._generate_return_dock()
+        elif isinstance(node, ReadingNode):
+            self._generate_read_sensor(node)
         else:
             raise ValueError(f"Tipo de nó não suportado: {type(node)}")
     
     def _generate_expression(self, expr_node):
         """Gera código para uma expressão e retorna o valor"""
         if isinstance(expr_node, ExpressionNode):
-            if isinstance(expr_node.value, int):
-                return ir.Constant(self.int_type, expr_node.value)
-            elif isinstance(expr_node.value, bool):
+            if isinstance(expr_node.value, bool):
                 return ir.Constant(self.bool_type, expr_node.value)
+            elif isinstance(expr_node.value, int):
+                return ir.Constant(self.int_type, expr_node.value)
             else:
                 return self._generate_expression(expr_node.value)
         elif isinstance(expr_node, IdentifierNode):
@@ -420,7 +423,6 @@ class LLVMCodeGenerator:
             raise ValueError(f"Variável não declarada: {node.identifier}")
         
         var_alloca = self.variables[node.identifier]
-        
         if node.value == "INC":
             current = self.builder.load(var_alloca)
             new_value = self.builder.add(current, ir.Constant(self.int_type, 1))
@@ -449,6 +451,22 @@ class LLVMCodeGenerator:
         """Gera código para retornar à base executando movimentos em ordem reversa"""
         self._generate_return_stack_execution()
 
+    def _generate_read_sensor(self, node: 'ReadingNode'):
+        """Gera código para ler um sensor"""
+        sensor_value = self._generate_expression(node.sensor)
+
+        # Se for booleano (i1), converte para i32 antes de passar para a função
+        if sensor_value.type == self.bool_type:
+            sensor_id = self.builder.zext(sensor_value, self.int_type)
+        else:
+            sensor_id = sensor_value
+
+        result = self.builder.call(self.read_sensor_func, [sensor_id])
+        var_name = f"sensor_{node.sensor.value}"
+        alloca = self.builder.alloca(self.int_type, name=var_name)
+        self.builder.store(result, alloca)
+        self.variables[var_name] = alloca
+        
 def compile_to_llvm(source_code: str) -> str:
     """Compila o código fonte para LLVM IR"""
     tokenizer = Tokenizer(source_code)
@@ -456,37 +474,31 @@ def compile_to_llvm(source_code: str) -> str:
     ast = parser.parse()
     
     llvm_generator = LLVMCodeGenerator()
+
+    llvm_generator.module.triple = 'x86_64-pc-linux-gnu'
     llvm_ir = llvm_generator.generate_code(ast)
     
     return llvm_ir
 
 if __name__ == "__main__":
-    source_code = """
-    int x
-    x = 10
-    
-    _move frente x
-    
-    _if x > 5 {
-        _rotate direita 90
-        _startclean
-    }
-    
-    _repeat 3 {
-        _move frente 5
-    }
-    _returndock
-    """
-    
+    if len(sys.argv) < 2:
+        print("Uso: python llvm.py <arquivo.txt>")
+        sys.exit(1)
+
+    input_file = sys.argv[1]
     try:
+        with open(input_file, 'r') as f:
+            source_code = f.read()
+
         llvm_ir = compile_to_llvm(source_code)
-        print("Código LLVM IR gerado:")
-        print(llvm_ir)
-        
-        # Salva o código em um arquivo
-        with open("robot_program.ll", "w") as f:
+
+        output_file = input_file.replace(".txt", ".ll") if input_file.endswith(".txt") else "output.ll"
+        with open(f"{output_file}", "w") as f:
             f.write(llvm_ir)
-        print("\nCódigo salvo em 'robot_program.ll'")
-        
+
+        print(f"\nCódigo LLVM IR gerado e salvo em '{output_file}'")
+        print(f"Target Triple: x86_64-pc-linux-gnu")
+
     except Exception as e:
         print(f"Erro na compilação: {e}")
+        sys.exit(1)

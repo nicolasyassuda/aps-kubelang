@@ -1,0 +1,20 @@
+int distancia
+int sujeira
+bool limpar
+
+distancia = 5
+sujeira = 3
+limpar = false
+
+_if distancia < 10 {
+    _move frente distancia
+}
+
+_if sujeira > 2 {
+    _cleanthrash
+    limpar = true
+}
+
+_if limpar {
+    _startclean
+}

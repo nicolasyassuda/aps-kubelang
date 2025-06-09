@@ -1,0 +1,14 @@
+int a
+int b
+bool resultado
+
+a = 10
+b = 5
+resultado = a > b
+_readSensor resultado
+resultado = a < b
+_readSensor resultado
+resultado = a == b
+_readSensor resultado
+resultado = a > true
+_readSensor resultado

@@ -1,0 +1,3 @@
+_readSensor 1
+_readSensor 2
+_readSensor 3

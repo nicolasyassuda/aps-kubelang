@@ -1,0 +1,8 @@
+bool iniciar
+iniciar = true
+
+_if iniciar {
+    _startclean
+    _move frente 3
+    _stopclean
+}
